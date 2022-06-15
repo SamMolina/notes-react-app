@@ -2,12 +2,12 @@ import React from 'react'
 import Container from 'react-bootstrap/Container'
 import Title from '../theming/Title'
 
-const Notes = () => {
+const ListNotes = () => {
     return (
         <Container>
-            <Title>Notes App</Title>
+            <Title>List Notes</Title>
         </Container>
     )
 }
 
-export default Notes
+export default ListNotes
