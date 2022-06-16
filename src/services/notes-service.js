@@ -1,54 +1,26 @@
-const fs = require('fs')
-const fileName = 'notes.json'
+const server = 'http://localhost:3001'
 
-const isNoteSaved = (notes, title) => notes.find(note => note.title === title) !== undefined
-
-const addNote = (title, body) => {
-    const notes = loadNotes()
-
-    if (isNoteSaved(notes, title)) throw Error('Duplicate note')
-
-    const newNote = {
-        title: title,
-        body: body
-    }
-    notes.push(newNote)
-    fs.writeFileSync(fileName, JSON.stringify(notes))
-}
-
-const removeNote = (title) => {
-    const notes = loadNotes()
-
-    if (!isNoteSaved(notes, title)) throw Error('No note found!')
-
-    const updatedNotes = notes.filter(note => note.title !== title)
-    fs.writeFileSync(fileName, JSON.stringify(updatedNotes))
-}
-
-const listNotes = () => {
-    return loadNotes()
-}
-
-const readNote = (title) => {
-    const notes = loadNotes()
-    const searchedNote = notes.find(note => note.title === title)
-    if (!searchedNote) throw Error('No note found!')
-    return searchedNote
-}
-
-const loadNotes = () => {
-    try {
-        const notesBuffer = fs.readFileSync(fileName)
-        const notes = JSON.parse(notesBuffer.toString())
-        return notes
-    } catch(e) {
-        return []
-    }
+const addNote = (title, body, setAlert) => {
+    return fetch(`${server}/add`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, body})
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            setAlert(data.alert)
+        })
+        .catch(error => {
+            setAlert({
+                type: 'danger',
+                message: 'Unexpected error occured!'
+            })
+        })
 }
 
 module.exports = {
-    addNote: addNote,
-    removeNote: removeNote,
-    listNotes: listNotes,
-    readNote: readNote
+    addNote: addNote
 }
