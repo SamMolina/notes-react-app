@@ -1,4 +1,4 @@
-const { addNote } = require('./notes-service')
+const { addNote } = require('./notes-fetcher')
 
 const Chance = require('chance')
 const chance = new Chance()
@@ -15,37 +15,40 @@ global.fetch = jest.fn(() =>
   })
 )
 
-const mockSetAlert = jest.fn()
-
 describe('Notes Service', () => {
 
     beforeEach(() => {
         fetch.mockClear();
-        mockSetAlert.mockClear();
-    });
+    })
 
     describe('add note', () => {
-        it('should call set alert when response has data', async () => {
+        it('should return data when call succeeds', async () => {
             const title = 'Books to buy'
             const body = 'Alice in Wonderland'
-            await addNote(title, body, mockSetAlert)
-            const expectedAlert = {
-                type: 'success',
-                message: 'Success message!'
+            const data = await addNote(title, body)
+            const expectedData = {
+                status: 'ok',
+                alert: {
+                    type: 'success',
+                    message: 'Success message!'
+                }
             }
-            expect(mockSetAlert).toHaveBeenCalledWith(expectedAlert)
+            expect(data).toEqual(expectedData)
         })
 
         it('should not call set alert when fetch fails', async () => {
             fetch.mockImplementationOnce(() => Promise.reject('Internal server error'));
             const title = 'Books to buy'
             const body = 'Alice in Wonderland'
-            await addNote(title, body, mockSetAlert)
-            const expectedAlert = {
-                type: 'danger',
-                message: 'Unexpected error occured!'
+            const data = await addNote(title, body)
+            const expectedData = {
+                status: 'error',
+                alert: {
+                    type: 'danger',
+                    message: 'Unexpected error occured!'
+                }
             }
-            expect(mockSetAlert).toHaveBeenCalledWith(expectedAlert)
+            expect(data).toEqual(expectedData)
         })
     })
     

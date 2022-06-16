@@ -1,6 +1,6 @@
 const server = 'http://localhost:3001'
 
-const addNote = (title, body, setAlert) => {
+const addNote = (title, body) => {
     return fetch(`${server}/add`, {
             method: 'POST',
             mode: 'cors',
@@ -10,14 +10,15 @@ const addNote = (title, body, setAlert) => {
             body: JSON.stringify({ title, body})
         })
         .then((response) => response.json())
-        .then((data) => {
-            setAlert(data.alert)
-        })
-        .catch(error => {
-            setAlert({
-                type: 'danger',
-                message: 'Unexpected error occured!'
-            })
+        .then((data) => data)
+        .catch(e => {
+            return {
+                status: 'error',
+                alert: {
+                    type: 'danger',
+                    message: 'Unexpected error occured!'
+                }
+            }
         })
 }
 
