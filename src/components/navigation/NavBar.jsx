@@ -1,7 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Nav from 'react-bootstrap/Nav'
-import styled from 'styled-components'
 
 const NavBar = () => {
     return (
